@@ -21,13 +21,16 @@ y_train, y_test = y_train.flatten(), y_test.flatten()
 #print("y_train.shape: ", y_train.shape)
 
 labels = ['plane','car','bird','cat','deer','dog','frog','horse','ship','truck']
+# labels in the CIFAR-10 in the right sequence
+
 
 K = len(set(y_train))
 #print("Number of classes: ", K)
 
 
-def make_and_train_model():
-
+def make_and_train_model(x_train=x_train, x_test=x_test, y_train=y_train, y_test=y_test):
+    """Makes and trains a model based on the VGG architecture
+    this model has 2,4 million parameters."""
     BaseSize = 32
 
     i = Input(shape=x_train[0].shape)
@@ -71,16 +74,21 @@ def make_and_train_model():
 
     return model
 
+
+# model = make_and_train_model()
+# instead of re-making the model everytime we run the script we have it saved and serialized and then we load it instead.
+
 model = tf.keras.models.load_model('cifar10_model/model.h5')
 
 
 def show_image_and_predict(index):
+    """Shows image and the label in the console and shows what the AI guessed and if it was correct.
+    takes index in the cifar10 dataset as argument"""
     current_arbritrairy_image = int(index)
 
     plt.imshow(pre_x_train[current_arbritrairy_image])
     plt.show()
 
-    labels = ['plane','car','bird','cat','deer','dog','frog','horse','ship','truck']
 
     print("The correct label for this is: ", labels[y_train[current_arbritrairy_image]])
 
@@ -98,7 +106,11 @@ def show_image_and_predict(index):
 
 
 def predict_local_image(path_to_image):
-    
+    """Attempts to predict what label there is on a local image on the computer.
+    takes path to imagefile as argument.
+    it rescales the image and saves a temporary file of the rescaled version of the image.
+    it normalizes the values and does the calculations and prints the label it predicts.
+    """
 
     img = PIL.Image.open(path_to_image)
     img = img.resize((32,32), PIL.Image.ANTIALIAS)
